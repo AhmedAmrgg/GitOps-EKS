@@ -15,39 +15,132 @@
 - **NGINX Ingress Controller** → Manages external access to services inside the Kubernetes cluster.
 - **Reloader** → Automatically restarts pods when ConfigMaps or Secrets change.
 - **kube-prometheus CRDs** → Custom Resource Definitions that extend Kubernetes to define monitoring resources.
-<!-- ## 🏗️ Architecture -->
+
 ## 📂Project Structure 
-```.
-├── .github/workflows/   # GitHub Actions pipelines
-├── manifests/           # Kubernetes YAML manifests
-│   ├── argocd/
+```
+├── infrastructure/           # Kubernetes YAML manifests
 │   ├── ingress-nginx/
 │   ├── kube-prometheus-stack/
-│   ├── loki-promtail/
+│   ├── loki/
 │   └── reloader/
-├── charts/              # Helm charts (if used)
+|   └── promtail/             
+└── app-1/
+|   └── deployment/
+└── apps/
+|   └── infra/
+|   └── app/
 └── README.md
+└── argocd/
 ```
 ## 🚀 Getting Started
+**Create the first app:**
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'
+    path: apps
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+```
+```
+kubectl apply -f argocd.yaml
+```
 **Clone the repo:**
 ```
-git clone https://github.com/your-username/devops-gitops-argocd.git
+git clone git@github.com:AhmedAmrgg/simple-gitops.git
 ```
-**Deploy ArgoCD:** 
+**Adding infra tools:**
+We will create new app for infra tools on apps directory:
 ```
-kubectl apply -f manifests/argocd/
-```
-Deploy monitoring & logging stack:
-```
-kubectl apply -f manifests/kube-prometheus-stack/
-kubectl apply -f manifests/loki-promtail/
-```
-Expose applications via NGINX Ingress.
-## 📊 Dashboards & Logs
-**Grafana** → http://<ingress-url>/grafana
-**Prometheus** → http://<ingress-url>/prometheus
-**Loki** → Logs accessible via Grafana dashboards
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infra
+  namespace: argocd   
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    targetRevision: main
+    path: infrastructure 
 
-## 🤝 Contributions
-- Feel free to fork, open issues, or submit PRs to enhance the project!
-- Would you like me to also make a LinkedIn post version of this README (short, professional, and attractive) so you can showcase the project to recruiters?
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    automated:   
+      prune: true
+      selfHeal: true
+```
+We will create infrastructure directory and add application for different infra tools like ingress nginx, kube-prometheus stack and loki.
+
+**Add new application for our apps:**
+We will create new app for application on apps directory:
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app
+  namespace: argocd   
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: myapp=docker.io/ahmedamr309/simple-trivy-app
+    argocd-image-updater.argoproj.io/myapp.update-strategy: latest
+    argocd-image-updater.argoproj.io/myapp.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    targetRevision: main
+    path: app-1   
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    automated:   
+      prune: true
+      selfHeal: true
+```
+## 🛠️ Infrastructure Tools
+
+This project uses several cloud-native infrastructure tools to provide observability, networking, and automation:
+- Ingress NGINX
+Acts as the entry point to the Kubernetes cluster. It routes external HTTP/HTTPS traffic to the correct services inside the cluster using Ingress rules.
+- kube-prometheus-stack
+A monitoring stack that includes:
+- Prometheus → Collects metrics from Kubernetes components, pods, and applications.
+- Grafana → Provides dashboards to visualize metrics and logs.
+- Alertmanager → Sends alerts when metrics cross thresholds.
+- Loki
+A log aggregation system (similar to Prometheus but for logs). It stores logs efficiently and integrates directly with Grafana.
+- Promtail (part of Loki stack)
+An agent that runs on Kubernetes nodes, collects logs from pods, and forwards them to Loki.
+- Reloader
+Watches ConfigMaps and Secrets. If they change, Reloader automatically restarts the affected pods so the updates are applied without manual intervention.
+
+## 📊 Monitoring & Logging
+- 🔹 Monitoring (kube-prometheus-stack)
+- Prometheus scrapes metrics from Kubernetes components (kubelet, API server, etc.), system services, and application pods via exporters.
+- The metrics are stored as time-series data in Prometheus.
+- Grafana connects to Prometheus as a data source and provides visual dashboards (CPU, memory, pod health, cluster state, etc.).
+- Alertmanager sends alerts (e.g., Slack, email, PagerDuty) when thresholds are exceeded (e.g., high CPU, pod crash loops).
+
+## 🔹 Logging (Loki + Promtail)
+- Promtail runs as a DaemonSet on each node. It reads container logs from /var/log/containers/ or Kubernetes API.
+- Promtail attaches metadata (like pod, namespace, container labels) to each log.
+- Logs are forwarded to Loki, which stores them in a lightweight, index-free way (cheaper and simpler than Elasticsearch).
+- Grafana is connected to Loki, allowing developers to query and visualize logs alongside metrics.# GitOps-EKS
