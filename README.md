@@ -16,7 +16,7 @@
 - **Reloader** → Automatically restarts pods when ConfigMaps or Secrets change.
 - **kube-prometheus CRDs** → Custom Resource Definitions that extend Kubernetes to define monitoring resources.
 <!-- ## 🏗️ Architecture -->
-## Project Structure 
+## 📂Project Structure 
 ```.
 ├── .github/workflows/   # GitHub Actions pipelines
 ├── manifests/           # Kubernetes YAML manifests
