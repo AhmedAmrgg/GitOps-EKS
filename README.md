@@ -5,43 +5,19 @@
 - The goal is to practice real-world DevOps practices such as CI/CD with GitHub Actions, GitOps deployments, and cloud-native monitoring/logging.
 
 ## ⚙️ Tools & Technologies
-- CI/CD: GitHub Actions
-- GitOps: ArgoCD
-- Monitoring & Metrics: kube-prometheus-stack (Prometheus + Grafana)
-- Logging: Loki + Promtail
-- Ingress: NGINX Ingress Controller
-- Configuration Reloading: Reloader
-- CRDs: kube-prometheus CRDs
-
-## 🏗️ Architecture
-graph TD
-```
-    A[Developer Push Code] --> B[GitHub Actions CI/CD]
-    B -->|Build/Test/Push| C[Container Registry]
-    C --> D[Git Repository (Manifests)]
-    D --> E[ArgoCD Controller]
-    E --> F[Kubernetes Cluster]
-    F --> G[NGINX Ingress]
-    F --> H[Prometheus & Grafana]
-    F --> I[Loki + Promtail]
-    F --> J[Reloader]
-```
-## 🔄 Workflow
-- Developer pushes code → GitHub Actions pipeline triggers.
-
- **CI/CD pipeline**
-- Builds Docker image
-- Runs security scans (optional: Trivy)
-- Pushes image to Amazon ECR / Docker Hub
-- Updates Kubernetes manifests (GitOps repo)
-- ArgoCD syncs the latest manifests to the Kubernetes cluster
-NGINX Ingress exposes services.
-- Prometheus + Grafana provide monitoring dashboards.
-- Loki + Promtail collect and centralize logs.
-- Reloader automatically reloads pods on ConfigMap/Secret updates.
-```
-Project Structure (example)
-.
+- **GitHub Actions** → CI/CD pipelines to build, test, scan, and push Docker images.
+- **ArgoCD** → GitOps tool that continuously syncs Kubernetes cluster state with the Git repository.
+- **kube-prometheus-stack** → A collection of monitoring tools (Prometheus + Grafana + Alertmanager) for metrics and alerts.
+- **Prometheus** → Collects and stores time-series metrics from applications and Kubernetes components.
+- **Grafana** → Visualizes metrics and logs in dashboards.
+- **Loki** → Log aggregation system (like Prometheus but for logs).
+- **Promtail** → Collects logs from pods/nodes and ships them to Loki.
+- **NGINX Ingress Controller** → Manages external access to services inside the Kubernetes cluster.
+- **Reloader** → Automatically restarts pods when ConfigMaps or Secrets change.
+- **kube-prometheus CRDs** → Custom Resource Definitions that extend Kubernetes to define monitoring resources.
+<!-- ## 🏗️ Architecture -->
+## Project Structure 
+```.
 ├── .github/workflows/   # GitHub Actions pipelines
 ├── manifests/           # Kubernetes YAML manifests
 │   ├── argocd/
@@ -53,8 +29,8 @@ Project Structure (example)
 └── README.md
 ```
 ## 🚀 Getting Started
-
-**Clone the repo:**```
+**Clone the repo:**
+```
 git clone https://github.com/your-username/devops-gitops-argocd.git
 ```
 **Deploy ArgoCD:** 
@@ -62,6 +38,7 @@ git clone https://github.com/your-username/devops-gitops-argocd.git
 kubectl apply -f manifests/argocd/
 ```
 Deploy monitoring & logging stack:
+```
 kubectl apply -f manifests/kube-prometheus-stack/
 kubectl apply -f manifests/loki-promtail/
 ```
