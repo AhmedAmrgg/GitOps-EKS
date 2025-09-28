@@ -43,7 +43,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'
+    repoURL: 'git@github.com:AhmedAmrgg/GitOps-EKS.git'
     path: apps
     targetRevision: main
   destination:
@@ -59,7 +59,7 @@ kubectl apply -f argocd.yaml
 ```
 **Clone the repo:**
 ```
-git clone git@github.com:AhmedAmrgg/simple-gitops.git
+git clone git@github.com:AhmedAmrgg/GitOps-EKS.git
 ```
 **Adding infra tools:**
 We will create new app for infra tools on apps directory:
@@ -72,7 +72,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    repoURL: 'git@github.com:AhmedAmrgg/GitOps-EKS.git'   
     targetRevision: main
     path: infrastructure 
 
@@ -102,7 +102,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    repoURL: 'git@github.com:AhmedAmrgg/GitOps-EKS.git'   
     targetRevision: main
     path: app-1   
 
