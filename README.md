@@ -18,7 +18,7 @@
 
 ## 📂Project Structure 
 ```
-├── infrastructure/           # Kubernetes YAML manifests
+├── infrastructure/           
 │   ├── ingress-nginx/
 │   ├── kube-prometheus-stack/
 │   ├── loki/
@@ -93,27 +93,27 @@ We will create new app for application on apps directory:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: app
-  namespace: argocd   
+  name: app-1
+  namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: myapp=docker.io/ahmedamr309/simple-trivy-app
-    argocd-image-updater.argoproj.io/myapp.update-strategy: latest
-    argocd-image-updater.argoproj.io/myapp.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+    # enable image updater
+    argocd-image-updater.argoproj.io/image-list: app-1=<account_id>.dkr.ecr.<region>.amazonaws.com/app-1
+    argocd-image-updater.argoproj.io/app-1.update-strategy: latest
+    argocd-image-updater.argoproj.io/app-1.pull-secret: pullsecret:argocd/ecr-creds
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/GitOps-EKS.git'   
+    repoURL: git@github.com:AhmedAmrgg/GitOps-EKS.git
     targetRevision: main
-    path: app-1   
-
+    path: apps/app-1
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
-
+    namespace: app-1
   syncPolicy:
-    automated:   
+    automated:
       prune: true
       selfHeal: true
+
 ```
 ## 🛠️ Infrastructure Tools
 
