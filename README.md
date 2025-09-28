@@ -5,16 +5,12 @@
 - The goal is to practice real-world DevOps practices such as CI/CD with GitHub Actions, GitOps deployments, and cloud-native monitoring/logging.
 
 ## ⚙️ Tools & Technologies
-- **GitHub Actions** → CI/CD pipelines to build, test, scan, and push Docker images.
 - **ArgoCD** → GitOps tool that continuously syncs Kubernetes cluster state with the Git repository.
 - **kube-prometheus-stack** → A collection of monitoring tools (Prometheus + Grafana + Alertmanager) for metrics and alerts.
-- **Prometheus** → Collects and stores time-series metrics from applications and Kubernetes components.
-- **Grafana** → Visualizes metrics and logs in dashboards.
 - **Loki** → Log aggregation system (like Prometheus but for logs).
 - **Promtail** → Collects logs from pods/nodes and ships them to Loki.
 - **NGINX Ingress Controller** → Manages external access to services inside the Kubernetes cluster.
 - **Reloader** → Automatically restarts pods when ConfigMaps or Secrets change.
-- **kube-prometheus CRDs** → Custom Resource Definitions that extend Kubernetes to define monitoring resources.
 
 ## 📂Project Structure 
 ```
