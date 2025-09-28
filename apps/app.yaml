@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    repoURL: 'git@github.com:AhmedAmrgg/GitOps-EKS.git'   
     targetRevision: main
     path: app-1   
 

@@ -1,20 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra
-  namespace: argocd   
+  name: app-1
+  namespace: argocd
+  annotations:
+    # enable image updater
+    argocd-image-updater.argoproj.io/image-list: app-1=<account_id>.dkr.ecr.<region>.amazonaws.com/app-1
+    argocd-image-updater.argoproj.io/app-1.update-strategy: latest
+    argocd-image-updater.argoproj.io/app-1.pull-secret: pullsecret:argocd/ecr-creds
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AhmedAmrgg/simple-gitops.git'   
+    repoURL: git@github.com:AhmedAmrgg/GitOps-EKS.git
     targetRevision: main
-    path: infrastructure 
-
+    path: apps/app-1
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
-
+    namespace: app-1
   syncPolicy:
-    automated:   
+    automated:
       prune: true
       selfHeal: true
+
